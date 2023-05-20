@@ -34,8 +34,13 @@ void philosopher(int id) {
         // Pick up forks
         {
             std::unique_lock<std::mutex> leftForkLock(forks[leftFork]);
-            std::unique_lock<std::mutex> rightForkLock(forks[rightFork]);
+            std::unique_lock<std::mutex> rightForkLock(forks[rightFork], std::try_to_lock);
 
+            //If right fork is occupied, release left fork
+            if(!rightForkLock.owns_lock()) {
+                forksCV[leftFork].notify_one();
+                //forksCV[rightFork].notify_one();
+            }
             // Eating
             {
                 std::lock_guard<std::mutex> printLock(printMutex);
