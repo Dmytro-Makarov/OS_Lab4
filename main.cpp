@@ -40,6 +40,7 @@ void philosopher(int id) {
             if(!rightForkLock.owns_lock()) {
                 forksCV[leftFork].notify_one();
                 //forksCV[rightFork].notify_one();
+                continue;
             }
             // Eating
             {
